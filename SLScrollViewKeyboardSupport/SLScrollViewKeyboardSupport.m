@@ -79,15 +79,16 @@ static UIView *findFirstResponderInView(UIView *view)
 - (void)_keyboardWillShowCallback:(NSNotification *)notification
 {
     UIView *firstResponder = findFirstResponderInView([[UIApplication sharedApplication] keyWindow]);
+    UIScrollView *scrollView = self.scrollView;
     
-    if (![firstResponder isDescendantOfView:self.scrollView]) {
+    if (![firstResponder isDescendantOfView:scrollView]) {
         return;
     }
     
     CGRect endFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     
-    CGRect keyboardFrame = [[UIApplication sharedApplication].keyWindow convertRect:endFrame toView:self.scrollView];
-    CGRect responderFrame = [firstResponder convertRect:firstResponder.bounds toView:self.scrollView];
+    CGRect keyboardFrame = [[UIApplication sharedApplication].keyWindow convertRect:endFrame toView:scrollView];
+    CGRect responderFrame = [firstResponder convertRect:firstResponder.bounds toView:scrollView];
     
     if (CGRectGetMaxY(responderFrame) <= CGRectGetMinY(keyboardFrame)) {
         return;
@@ -100,8 +101,8 @@ static UIView *findFirstResponderInView(UIView *view)
     offset += 8.0f;
     
     [UIView animateWithDuration:duration delay:0.0f options:options animations:^{
-        [self.scrollView setContentOffset:CGPointMake(0.0f, CGRectGetMinY(responderFrame)) animated:NO];
-        self.scrollView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, offset, 0.0f);
+        [scrollView setContentOffset:CGPointMake(0.0f, CGRectGetMinY(responderFrame)) animated:NO];
+        scrollView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, offset, 0.0f);
     } completion:NULL];
 }
 
