@@ -86,23 +86,15 @@ static UIView *findFirstResponderInView(UIView *view)
     }
     
     CGRect endFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    
-    CGRect keyboardFrame = [[UIApplication sharedApplication].keyWindow convertRect:endFrame toView:scrollView];
-    CGRect responderFrame = [firstResponder convertRect:firstResponder.bounds toView:scrollView];
-    
-    if (CGRectGetMaxY(responderFrame) <= CGRectGetMinY(keyboardFrame)) {
-        return;
-    }
-    
-    CGFloat offset = CGRectGetMaxY(responderFrame) - CGRectGetMinY(keyboardFrame);
     CGFloat duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
     UIViewAnimationOptions options = [notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue] | UIViewAnimationOptionBeginFromCurrentState;
     
-    offset += 8.0f;
-    
+    CGRect keyboardFrame = [[UIApplication sharedApplication].keyWindow convertRect:endFrame toView:scrollView];
+    CGRect hiddenFrame = CGRectIntersection(keyboardFrame, scrollView.bounds);
+
     [UIView animateWithDuration:duration delay:0.0f options:options animations:^{
-        [scrollView setContentOffset:CGPointMake(0.0f, CGRectGetMinY(responderFrame)) animated:NO];
-        scrollView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, offset, 0.0f);
+        //[scrollView setContentOffset:CGPointMake(0.0f, CGRectGetMinY(responderFrame)) animated:NO];
+        scrollView.contentInset = UIEdgeInsetsMake(0.0f, 0.0f, CGRectGetHeight(hiddenFrame), 0.0f);
     } completion:NULL];
 }
 
